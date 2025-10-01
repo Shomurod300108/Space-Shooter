@@ -18,31 +18,46 @@ public class Player : MonoBehaviour
     [SerializeField]
     private int _lives = 3;
     private Spawn_Manager _spawnManager;
-
     private bool _isTripleShotActive = false;
     private bool _isShieldActive = false;
     private bool _isSpeedBoostActive = false;
-
     [SerializeField]
     private GameObject _shieldVisualizer;
     [SerializeField]
+    private GameObject _rightEngine, _leftEngine;
+    [SerializeField]
+    private AudioClip _laserSoundClip;
+    private AudioSource _audioSource;
+    [SerializeField]
     private int _score;
-
     private UIManager _uiManager;
-
-
 
     void Start()
     {
 
         transform.position = new Vector3(0, 0, 0);
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<Spawn_Manager>();
+        _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        _audioSource = GetComponent<AudioSource>();
 
-       
 
         if (_spawnManager == null)
         {
             Debug.LogError("The spawn manager is null");
+        }
+
+        if (_uiManager == null)
+        {
+            Debug.LogError("The UI manager is null");
+        }
+
+        if (_audioSource == null)
+        {
+            Debug.LogError("The AudioSource is NULL");
+        }
+        else
+        {
+            _audioSource.clip = _laserSoundClip;
         }
     }
 
@@ -56,6 +71,7 @@ public class Player : MonoBehaviour
         }
 
     }
+    
     void CalculateMovement()
     {
         float horizontalInput = Input.GetAxis("Horizontal");
@@ -79,15 +95,16 @@ public class Player : MonoBehaviour
             transform.position = new Vector3(transform.position.x, -3.97f, 0);
         }
 
-        if (transform.position.x > 12.75f)
+        if (transform.position.x > 11f)
         {
-            transform.position = new Vector3(-12.75f, transform.position.y, 0);
+            transform.position = new Vector3(-11f, transform.position.y, 0);
         }
-        else if (transform.position.x < -12.75f)
+        else if (transform.position.x < -11f)
         {
-            transform.position = new Vector3(12.75f, transform.position.y, 0);
+            transform.position = new Vector3(11f, transform.position.y, 0);
         }
     }
+
     void FireLaser()
     {
         _canFire = Time.time + _fireRate;
@@ -101,8 +118,10 @@ public class Player : MonoBehaviour
         {
             Instantiate(_laserPreFab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
         }
+        _audioSource.Play();
 
     }
+
     public void Damage()
     {
         if (_isShieldActive == true)
@@ -111,7 +130,21 @@ public class Player : MonoBehaviour
             _shieldVisualizer.SetActive(false);
             return;
         }
+
         _lives = _lives - 1;
+
+        if (_lives == 2)
+        {
+            _leftEngine.SetActive(true);
+        }
+
+        else if (_lives == 1)
+        {
+            _rightEngine.SetActive(true);
+        }
+
+
+        _uiManager.UpdateLives(_lives);
 
         if (_lives < 1)
         {
@@ -119,6 +152,7 @@ public class Player : MonoBehaviour
             Destroy(this.gameObject);
         }
     }
+
     public void TripleShotActive()
     {
         _isTripleShotActive = true;
@@ -130,27 +164,30 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(5.0f);
         _isTripleShotActive = false;
     }
+
     public void SpeedBoostActive()
     {
         _isSpeedBoostActive = true;
         _speed *= _speedMultiplier;
         StartCoroutine(SpeedBoostPowerDownRoutine());
     }
+
     IEnumerator SpeedBoostPowerDownRoutine()
     {
         yield return new WaitForSeconds(5.0f);
         _isSpeedBoostActive = false;
         _speed /= _speedMultiplier;
     }
+
     public void ShieldActive()
     {
         _isShieldActive = true;
         _shieldVisualizer.SetActive(true);
     }
-    //method to add points to the score!
-    //Communicate with UI to update the score
-    public void AddScore(int points)
+
+        public void AddScore(int points)
     {
         _score += points;
+        _uiManager.UpdateScore(_score);
     }
 }

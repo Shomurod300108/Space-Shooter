@@ -10,24 +10,19 @@ public class Spawn_Manager : MonoBehaviour
     private GameObject _enemyContainer;
     [SerializeField]
     private GameObject[] _powerups;
-
     private bool _stopSpawning = false;
 
-
-
-    // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(SpawnEnemyRoutine());
+
+    }
+
+    public void StartSpawning()
+{
+     StartCoroutine(SpawnEnemyRoutine());
         StartCoroutine(SpawnPowerupRoutine());
        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
+}
 
     IEnumerator SpawnEnemyRoutine()
     {

@@ -62,7 +62,7 @@ public class Enemy : MonoBehaviour
             transform.position = new Vector3(RandomX, 7f, 0);
         }
     }
-    
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Player")
@@ -96,6 +96,6 @@ public class Enemy : MonoBehaviour
             Destroy(GetComponent<Collider2D>());
             Destroy(this.gameObject, 2.5f);
         }
-    }
 
+    }
 }

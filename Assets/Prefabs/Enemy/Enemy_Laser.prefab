@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2888822406875122192
 Transform:
   m_ObjectHideFlags: 0
@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 8
-  _isEnemyLaser: 0
+  _isEnemyLaser: 1
 --- !u!1001 &3458772315743539001
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -62,12 +62,12 @@ PrefabInstance:
     - target: {fileID: 779798399437871688, guid: 86a244729a7340b45b4dca373ba397f0,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.112
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 779798399437871688, guid: 86a244729a7340b45b4dca373ba397f0,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.95
+      value: -1.067
       objectReference: {fileID: 0}
     - target: {fileID: 779798399437871688, guid: 86a244729a7340b45b4dca373ba397f0,
         type: 3}
@@ -137,12 +137,12 @@ PrefabInstance:
     - target: {fileID: 779798399437871688, guid: 86a244729a7340b45b4dca373ba397f0,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.112
+      value: -0.17
       objectReference: {fileID: 0}
     - target: {fileID: 779798399437871688, guid: 86a244729a7340b45b4dca373ba397f0,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.95
+      value: -1.07
       objectReference: {fileID: 0}
     - target: {fileID: 779798399437871688, guid: 86a244729a7340b45b4dca373ba397f0,
         type: 3}

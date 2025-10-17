@@ -19,10 +19,7 @@ public class Asteroid : MonoBehaviour
             Debug.LogError("The spawn manager is null");
         }
 
-        
-
-
-    }
+}
 
     void Update()
     {
@@ -34,7 +31,7 @@ public class Asteroid : MonoBehaviour
         if (other.tag == "Laser")
         {
             Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
-            Destroy(this.gameObject, 0.75f);
+            Destroy(this.gameObject, 0.25f);
             _spawnManager.StartSpawning();
             Destroy(other.gameObject);
         }

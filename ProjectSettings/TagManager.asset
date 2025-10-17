@@ -8,6 +8,7 @@ TagManager:
   - Laser
   - TripleShot
   - EnemyLaser
+  - AmmoRefill
   layers:
   - Default
   - TransparentFX

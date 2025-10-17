@@ -7,7 +7,7 @@ public class Powerup : MonoBehaviour
     [SerializeField]
     private float _speed = 3.0f;
     [SerializeField] 
-    private int powerupID;
+    private int _powerupID;
     [SerializeField]
     private AudioClip _clip;
     
@@ -29,8 +29,7 @@ public class Powerup : MonoBehaviour
             AudioSource.PlayClipAtPoint(_clip, transform.position);
             if (player != null)
             {
-
-                switch (powerupID)
+                switch (_powerupID)
                 {
                     case 0:
                         player.TripleShotActive();
@@ -41,11 +40,19 @@ public class Powerup : MonoBehaviour
                     case 2:
                         player.ShieldActive();
                         break;
+                        case 3:
+                        player.AmmoRefillBoostActive();
+                        break;
+                    case 4:
+                        player.AddLivesActive();
+                        break;
+                    case 5:
+                        player.SlowDownActive();
+                        break;
                     default:
                         Debug.Log("Default Value");
                         break;
                 }
-
 
             }
             Destroy(this.gameObject);

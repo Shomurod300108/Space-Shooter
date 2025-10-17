@@ -29,8 +29,16 @@ public class UIManager : MonoBehaviour
     }
     public void UpdateLives(int currentLives)
     {
+    if (currentLives >= 0 && currentLives < _livesSprites.Length)
+    {
         _livesImage.sprite = _livesSprites[currentLives];
-        if (currentLives == 0)
+    }
+    else
+    {
+        Debug.LogWarning("Invalid currentLives value: " + currentLives);
+    }
+
+    if (currentLives == 0)
         {
             GameOverSequence();
         }

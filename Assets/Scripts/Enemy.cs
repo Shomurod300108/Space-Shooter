@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 public class Enemy : MonoBehaviour
 {
     [SerializeField]
-    protected float _speed = 4.0f;
+    protected float _speed = 3.0f;
     protected Player _player;
     protected Animator _anim;
     protected AudioSource _audioSource;
@@ -24,7 +24,9 @@ public class Enemy : MonoBehaviour
     private float _frequency;
     private float _phase;
     private float _distanceY;
-
+    [SerializeField]
+    protected GameObject _shieldVisualizer;
+    protected bool _hasShield = false;
 
     protected virtual void Start()
     {
@@ -32,24 +34,23 @@ public class Enemy : MonoBehaviour
         _anim = GetComponent<Animator>();
         _audioSource = GetComponent<AudioSource>();
 
-        if (_player == null)
-        {
-            Debug.LogError("The player is null");
-        }
-
-        if (_anim == null)
-        {
-            Debug.LogError("The animator is null");
-        }
-
         if (_movementPattern == EnemyMovementPattern.ZigZag)
         {
             _spawnTime = Time.time;
             _frequency = (float)(Mathf.PI * UnityEngine.Random.Range(0.16f, 0.64f));
             _phase = UnityEngine.Random.Range(0f, 2f);
-
         }
 
+        int chance = Random.Range(0, 100);
+        if (chance < 30)
+        {
+            _hasShield = true;
+            _shieldVisualizer.SetActive(true);
+        }
+        else
+        {
+            _shieldVisualizer.SetActive(false);
+        }
     }
 
     protected virtual void Update()
@@ -59,27 +60,27 @@ public class Enemy : MonoBehaviour
     }
 
     protected virtual void FireRoutine()
-    { 
+    {
         if (Time.time > _canFire)
         {
-                _fireRate = Random.Range(3f, 7f);
-                _canFire = Time.time + _fireRate;
-                GameObject enemyLaser = Instantiate(_laserPrefab, transform.position, Quaternion.identity);
-                Laser[] lasers = enemyLaser.GetComponentsInChildren<Laser>();
-               for (int i = 0; i < lasers.Length; i++)
-               {
-                   lasers[i].AssignEnemyLaser();
-               }
+            _fireRate = Random.Range(3f, 7f);
+            _canFire = Time.time + _fireRate;
+            GameObject enemyLaser = Instantiate(_laserPrefab, transform.position, Quaternion.identity);
+            Laser[] lasers = enemyLaser.GetComponentsInChildren<Laser>();
+            for (int i = 0; i < lasers.Length; i++)
+            {
+                lasers[i].AssignEnemyLaser();
+            }
         }
     }
 
     protected virtual void CalculateMovement()
     {
         if (_movementPattern == EnemyMovementPattern.Down)
-        { 
+        {
             MoveDown();
         }
-        else 
+        else
         {
             MoveZigZagDown();
         }
@@ -120,6 +121,13 @@ public class Enemy : MonoBehaviour
                 player.Damage();
             }
 
+            if (_hasShield)
+            {
+                _hasShield = false;
+                _shieldVisualizer.SetActive(false);
+                return;
+            }
+
             _anim.SetTrigger("OnEnemyDeath");
             _speed = 0;
             _audioSource.Play();
@@ -137,6 +145,13 @@ public class Enemy : MonoBehaviour
                 _player.AddScore(10);
             }
 
+            if (_hasShield)
+            {
+                _hasShield = false;
+                _shieldVisualizer.SetActive(false);
+                return;
+            }
+
             _anim.SetTrigger("OnEnemyDeath");
             _speed = 0;
             _audioSource.Play();
@@ -145,12 +160,11 @@ public class Enemy : MonoBehaviour
             Destroy(this.gameObject);
             Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
         }
-
     }
 
     private void Awake()
     {
-        //randomly assign the new movement pattern
+        // Randomly assign the new movement pattern
         int count = Enum.GetValues(typeof(EnemyMovementPattern)).Length;
         int movementIndex = UnityEngine.Random.Range(0, count);
         _movementPattern = (EnemyMovementPattern)Enum.GetValues(typeof(EnemyMovementPattern)).GetValue(movementIndex);
@@ -163,9 +177,9 @@ public class Enemy : MonoBehaviour
     }
 
     private void SetStartPosition()
-   {
-    float randomX = Random.Range(-11f, 11f);
-    transform.position = new Vector3(randomX, 7f, 0);
-   }
-
+    {
+        float randomX = Random.Range(-11f, 11f);
+        transform.position = new Vector3(randomX, 7f, 0);
+    }
 }
+

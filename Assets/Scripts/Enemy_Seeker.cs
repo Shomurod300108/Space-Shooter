@@ -66,7 +66,14 @@ private void OnTriggerEnter2D(Collider2D other)
             {
                 player.Damage();
             }
-        
+
+            if (_hasShield)
+            {
+                _hasShield = false;
+                _shieldVisualizer.SetActive(false);
+                return;
+            }
+
         _anim.SetTrigger("OnEnemyDeath");
         _speed = 0;
         _audioSource.Play();
@@ -76,7 +83,25 @@ private void OnTriggerEnter2D(Collider2D other)
     }
     else if (other.CompareTag("Laser"))
     {
-        Destroy(gameObject);
+        Player player = other.GetComponent<Player>();
+            if (player != null)
+            {
+                player.Damage();
+            }
+
+            if (_hasShield)
+            {
+                _hasShield = false;
+                _shieldVisualizer.SetActive(false);
+                return;
+            }
+
+        _anim.SetTrigger("OnEnemyDeath");
+        _speed = 0;
+        _audioSource.Play();
+
+        Destroy(gameObject); 
+        Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
     }
 }
 

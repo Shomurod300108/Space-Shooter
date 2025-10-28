@@ -9,6 +9,7 @@ TagManager:
   - TripleShot
   - EnemyLaser
   - AmmoRefill
+  - Powerup
   layers:
   - Default
   - TransparentFX
@@ -19,7 +20,7 @@ TagManager:
   - 
   - 
   - Post Processing
-  - 
+  - PlayerLaser
   - 
   - 
   - 

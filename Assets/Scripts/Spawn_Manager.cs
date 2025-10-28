@@ -4,26 +4,21 @@ using UnityEngine;
 
 public class Spawn_Manager : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject _enemyPrefab;
-    [SerializeField]
-    private GameObject _enemyContainer;
-    [SerializeField]
-    private GameObject[] _powerups;
+    [SerializeField] private GameObject _enemyPrefab;
+    [SerializeField] private GameObject _enemyContainer;
+    [SerializeField] private GameObject[] _powerups;
     private bool _stopSpawning = false;
     private bool _isSpawning = false;
-    [SerializeField]
-    private int _startingEnemiesInWave = 5;  //enemies in wave 1 
-    [SerializeField]
-    private int _enemiesIncreasePerWave = 2;  //how many added each wave
-    [SerializeField]
-    private float _timeBetweenSpawns = 0.75f;   //time between each enemy spawn
-    [SerializeField]
-    private float _timeBetweenWaves = 2.5f;   //delay after a wave finishes before next wave
+    [SerializeField] private int _startingEnemiesInWave = 5;  //enemies in wave 1 
+    [SerializeField] private int _enemiesIncreasePerWave = 2;  //how many added each wave
+    [SerializeField] private float _timeBetweenSpawns = 0.75f;   //time between each enemy spawn
+    [SerializeField] private float _timeBetweenWaves = 2.5f;   //delay after a wave finishes before next wave
     private int _currentWave = 0;
     private int _enemiesInWave = 0;
-    [SerializeField]
-    private GameObject _seekerEnemyPrefab;
+    [SerializeField] private GameObject _seekerEnemyPrefab;
+    [SerializeField] private GameObject _dodgerEnemyPrefab;
+    [SerializeField] private GameObject _projectilePowerupPrefab;
+    [SerializeField] private float _projectilePowerupChance = 0.05f;
 
     public int CurrentWave => _currentWave;
   
@@ -42,14 +37,31 @@ public class Spawn_Manager : MonoBehaviour
 
     private void SpawnEnemy()
 {
-    Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
+    Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 6f, 0);
 
-    // 25% chance to spawn seeker enemy, otherwise normal
-    GameObject enemyToSpawn = Random.value < 0.25f ? _seekerEnemyPrefab : _enemyPrefab;
+    float randomValue = Random.value; // Generate once between 0 and 1
+    GameObject enemyToSpawn;
+
+    if (randomValue < 0.1f)
+    {
+        // 10% chance → Dodger enemy
+        enemyToSpawn = _dodgerEnemyPrefab;
+    }
+    else if (randomValue < 0.35f)
+    {
+        // Next 25% chance → Seeker enemy
+        enemyToSpawn = _seekerEnemyPrefab;
+    }
+    else
+    {
+        // Remaining 65% → Normal enemy
+        enemyToSpawn = _enemyPrefab;
+    }
 
     GameObject newEnemy = Instantiate(enemyToSpawn, posToSpawn, Quaternion.identity);
     newEnemy.transform.parent = _enemyContainer.transform;
 }
+
 
 
 
@@ -59,13 +71,7 @@ public class Spawn_Manager : MonoBehaviour
     {
         if (_stopSpawning) yield break;
 
-        // Decide which enemy to spawn: normal or seeker
-        GameObject enemyPrefabToSpawn = Random.value < 0.25f ? _seekerEnemyPrefab : _enemyPrefab; 
-        // 25% chance for seeker enemies (you can tweak this)
-
-        Vector3 spawnPos = new Vector3(Random.Range(-8f, 8f), 7, 0);
-        GameObject newEnemy = Instantiate(enemyPrefabToSpawn, spawnPos, Quaternion.identity);
-        newEnemy.transform.parent = _enemyContainer.transform;
+            SpawnEnemy();
 
         yield return new WaitForSeconds(_timeBetweenSpawns);
     }
@@ -90,16 +96,31 @@ public class Spawn_Manager : MonoBehaviour
         }
     }
 
-       IEnumerator SpawnPowerupRoutine()
+    IEnumerator SpawnPowerupRoutine()
     {
-        while (_stopSpawning == false)
-       {
-         Vector3 postoSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
-            int randomPowerUp = Random.Range(0, 6);
-         Instantiate(_powerups[randomPowerUp], postoSpawn, Quaternion.identity);
-         yield return new WaitForSeconds(Random.Range(3, 8));
-       }
+        while (!_stopSpawning)
+        {
+            yield return new WaitForSeconds(Random.Range(3f, 7f));
+
+            float randomValue = Random.value;
+            Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7f, 0f);
+
+            if (randomValue < _projectilePowerupChance)
+            {
+                // Spawn your rare projectile powerup
+                Instantiate(_projectilePowerupPrefab, posToSpawn, Quaternion.identity);
+            }
+            else
+            {
+                // Spawn one of your normal powerups
+                GameObject randomPowerup = _powerups[Random.Range(0, _powerups.Length)];
+                Instantiate(randomPowerup, posToSpawn, Quaternion.identity);
+            }
+        }
+
+        yield break;
     }
+    
 
     public void OnPlayerDeath()
     {

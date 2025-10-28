@@ -7,7 +7,7 @@ public class Enemy_Seeker : Enemy
     [SerializeField]
     private float _fireRateSeeker = 4f;
     private float _nextFire = 0f;
-    private float _canFireSeeker = -1f;
+    private float _canFireSeeker = 1.5f;
     [SerializeField]
     private float _zigzagFrequency = 2f;
     [SerializeField]
@@ -26,7 +26,6 @@ public class Enemy_Seeker : Enemy
         base.Update();
         if (Time.time > _nextFire)
         {
-            _nextFire = Time.time + _fireRate;
             FireSeekerMissile();
         }
     }
@@ -57,52 +56,9 @@ public class Enemy_Seeker : Enemy
             transform.position = new Vector3(randomX, 7f, 0);
         }
     }
-private void OnTriggerEnter2D(Collider2D other)
+protected override void OnTriggerEnter2D(Collider2D other)
 {
-    if (other.CompareTag("Player"))
-    {
-        Player player = other.GetComponent<Player>();
-            if (player != null)
-            {
-                player.Damage();
-            }
-
-            if (_hasShield)
-            {
-                _hasShield = false;
-                _shieldVisualizer.SetActive(false);
-                return;
-            }
-
-        _anim.SetTrigger("OnEnemyDeath");
-        _speed = 0;
-        _audioSource.Play();
-
-        Destroy(gameObject); 
-        Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
-    }
-    else if (other.CompareTag("Laser"))
-    {
-        Player player = other.GetComponent<Player>();
-            if (player != null)
-            {
-                player.Damage();
-            }
-
-            if (_hasShield)
-            {
-                _hasShield = false;
-                _shieldVisualizer.SetActive(false);
-                return;
-            }
-
-        _anim.SetTrigger("OnEnemyDeath");
-        _speed = 0;
-        _audioSource.Play();
-
-        Destroy(gameObject); 
-        Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
-    }
+    base.OnTriggerEnter2D(other);
 }
 
 

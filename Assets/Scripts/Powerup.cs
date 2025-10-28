@@ -10,6 +10,14 @@ public class Powerup : MonoBehaviour
     private int _powerupID;
     [SerializeField]
     private AudioClip _clip;
+    private Transform _player;
+    private float _moveSpeed = 6.0f;
+    private bool _isAttracted = false;
+    
+    void Start()
+    {
+        _player = GameObject.Find("Player").transform;
+    }
     
     void Update()
     {
@@ -17,6 +25,11 @@ public class Powerup : MonoBehaviour
         if (transform.position.y < -6f)
         {
             Destroy(this.gameObject);
+        }
+
+        if (_isAttracted && _player != null)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, _player.position, _moveSpeed * Time.deltaTime);
         }
     }
 
@@ -58,5 +71,11 @@ public class Powerup : MonoBehaviour
             Destroy(this.gameObject);
         }
             
+    }
+
+    public void StartAttraction(float speed)
+    {
+      _isAttracted = true;
+      _moveSpeed = speed;
     }
 }

@@ -6,57 +6,44 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
 
-    [SerializeField]
-    private float _speed = 7.0f;
+    [SerializeField] private float _speed = 7.0f;
     private float _speedMultiplier = 2.0f;
     public float _sprintMultiplier = 1.5f;
-    [SerializeField]
-    private GameObject _laserPreFab;
-    [SerializeField]
-    private GameObject _tripleShotPrefab;
-    [SerializeField]
-    private float _fireRate = 0.15f;
+    [SerializeField] private GameObject _laserPreFab;
+    [SerializeField] private GameObject _tripleShotPrefab;
+    [SerializeField] private float _fireRate = 0.15f;
     private float _canFire = -1f;
-    [SerializeField]
-    private int _lives = 3;
+    [SerializeField] private int _lives = 3;
     private Spawn_Manager _spawnManager;
     private bool _isTripleShotActive = false;
-    [SerializeField]
-    private int _shieldHealth = 3;
+    [SerializeField] private int _shieldHealth = 3;
     private bool _isShieldActive = false;
     private bool _isSpeedBoostActive = false;
     private bool _isAmmoRefillBoostActive = false;
     private bool _isAddLivesActive = false;
-    [SerializeField]
-    private GameObject _shieldVisualizer;
+    [SerializeField] private GameObject _shieldVisualizer;
     private SpriteRenderer _shieldRenderer;
-    [SerializeField]
-    private GameObject _rightEngine, _leftEngine;
-    [SerializeField]
-    private AudioClip _laserSoundClip;
+    [SerializeField] private GameObject _rightEngine, _leftEngine;
+    [SerializeField] private AudioClip _laserSoundClip;
     private AudioSource _audioSource;
-    [SerializeField]
-    private int _score;
+    [SerializeField] private int _score;
     private UIManager _uiManager;
-    [SerializeField]
-    private Slider _thrusterSlider;
-    [SerializeField]
-    private float _maxThruster = 100f;
-    [SerializeField]
-    private float _currentThruster = 100f;
-    [SerializeField]
-    private float _thrusterUseRate = 10f;
-    [SerializeField]
-    private float _thrusterRechargeRate = 8f;
-    [SerializeField]
-    private int _ammoCount = 15;
+    [SerializeField] private Slider _thrusterSlider;
+    [SerializeField] private float _maxThruster = 100f;
+    [SerializeField] private float _currentThruster = 100f;
+    [SerializeField] private float _thrusterUseRate = 10f;
+    [SerializeField] private float _thrusterRechargeRate = 8f;
+    [SerializeField] private int _ammoCount = 15;
     private Text _ammoCountText;
-    [SerializeField]
-    private bool _isAmmoEmpty = false;
-    [SerializeField]
-    private Animator _cameraAnim;
+    [SerializeField] private bool _isAmmoEmpty = false;
+    [SerializeField] private Animator _cameraAnim;
     private bool _isSlowDownActive = false;
     private float _slowdownRate = 0.5f;
+    [SerializeField] private GameObject _homingMissilePrefab;
+    [SerializeField] private Transform _missileSpawnPoint;
+    [SerializeField] private float _homingFireRate = 0.5f;
+    private bool _isHomingActive = false;
+    private Coroutine _homingRoutine;
 
     void Start()
     {
@@ -66,16 +53,6 @@ public class Player : MonoBehaviour
         _audioSource = GetComponent<AudioSource>();
         _ammoCountText = GameObject.Find("Ammo_Count_Text").GetComponent<Text>();
         _cameraAnim = GameObject.Find("Main Camera").GetComponent<Animator>();
-
-        if (_spawnManager == null)
-        {
-            Debug.LogError("The spawn manager is null");
-        }
-
-        if (_uiManager == null)
-        {
-            Debug.LogError("The UI manager is null");
-        }
 
         if (_audioSource == null)
         {
@@ -99,12 +76,6 @@ public class Player : MonoBehaviour
         if (_shieldVisualizer != null)
         {
             _shieldRenderer = _shieldVisualizer.GetComponent<SpriteRenderer>();
-            Debug.Log("Shield Renderer assigned: " + _shieldRenderer);
-        }
-
-        if (_ammoCountText == null)
-        {
-            Debug.LogError("Ammo count text is null");
         }
     }
 
@@ -112,6 +83,11 @@ public class Player : MonoBehaviour
     {
         CalculateMovement();
         CheckFireInput();
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            AttractPowerups();
+        }
     }
 
     void CheckFireInput()
@@ -343,6 +319,55 @@ public class Player : MonoBehaviour
         }
 
     }
+
+    private void AttractPowerups()
+    {
+        GameObject[] powerups = GameObject.FindGameObjectsWithTag("Powerup");
+
+        foreach (GameObject powerup in powerups)
+        {
+            Powerup p = powerup.GetComponent<Powerup>();
+
+            if (p != null)
+            {
+                p.StartAttraction(10f);
+            }
+        }
+    }
+
+    public void ActivateHoming()
+    {
+       if (_isHomingActive)
+        return;
+
+       _isHomingActive = true;
+       _homingRoutine = StartCoroutine(HomingRoutine());
+       StartCoroutine(HomingPowerDownRoutine());
+    }
+
+    private IEnumerator HomingRoutine()
+    {
+        Debug.Log("Homing activated");
+        while (_isHomingActive)
+        {
+           if (_homingMissilePrefab != null && _missileSpawnPoint != null)
+           {
+              Instantiate(_homingMissilePrefab, _missileSpawnPoint.position, Quaternion.identity);
+           }
+        yield return new WaitForSeconds(_homingFireRate);
+        }
+    }
+
+    private IEnumerator HomingPowerDownRoutine()
+    {
+        Debug.Log("Spawning homing missile...");
+       yield return new WaitForSeconds(10f); // homing lasts 10 seconds
+       _isHomingActive = false;
+
+       if (_homingRoutine != null)
+        StopCoroutine(_homingRoutine);
+    }
+
 
    
 }

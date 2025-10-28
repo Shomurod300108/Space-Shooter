@@ -177,12 +177,12 @@ SpriteRenderer:
   m_SortingLayerID: 535529281
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 6ead0dbd9248c7248a8a00b3b9443cf9, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Sprite: {fileID: 21300000, guid: dc3fd17e269498e44b7508e16816312a, type: 3}
+  m_Color: {r: 0.7735849, g: 0.10658384, b: 0.054734774, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 10.24, y: 10.24}
+  m_Size: {x: 9, y: 14.4}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -226,8 +226,8 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 10.24, y: 10.24}
-    newSize: {x: 10.24, y: 10.24}
+    oldSize: {x: 9, y: 14.4}
+    newSize: {x: 9, y: 14.4}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -254,6 +254,12 @@ MonoBehaviour:
     type: 3}
   _movementPattern: 0
   _shieldVisualizer: {fileID: 7665279321770499092}
+  _enemyThruster: {fileID: 0}
+  _dist: 0
+  _aggroSpeed: 10
+  _backwardLaserPrefab: {fileID: 8812229116674400736, guid: 80c896d0b9803c145b204dc48f9322ae,
+    type: 3}
+  _horizontalThreshold: 0.5
   _seekerMissilePrefab: {fileID: 374486292062009791, guid: a752e165967cdc642870797c16f99fd5,
     type: 3}
   _fireRateSeeker: 4

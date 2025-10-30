@@ -4,12 +4,9 @@ using UnityEngine;
 
 public class Powerup : MonoBehaviour
 {
-    [SerializeField]
-    private float _speed = 3.0f;
-    [SerializeField] 
-    private int _powerupID;
-    [SerializeField]
-    private AudioClip _clip;
+    [SerializeField] private float _speed = 3.0f;
+    [SerializeField] private int _powerupID;
+    [SerializeField] private AudioClip _clip;
     private Transform _player;
     private float _moveSpeed = 6.0f;
     private bool _isAttracted = false;

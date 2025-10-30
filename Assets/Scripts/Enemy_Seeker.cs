@@ -2,16 +2,12 @@
 
 public class Enemy_Seeker : Enemy
 {
-    [SerializeField]
-    private GameObject _seekerMissilePrefab;
-    [SerializeField]
-    private float _fireRateSeeker = 4f;
+    [SerializeField] private GameObject _seekerMissilePrefab;
+    [SerializeField] private float _fireRateSeeker = 4f;
     private float _nextFire = 0f;
     private float _canFireSeeker = 1.5f;
-    [SerializeField]
-    private float _zigzagFrequency = 2f;
-    [SerializeField]
-    private float _zigzagAmplitude = 1.5f;
+    [SerializeField] private float _zigzagFrequency = 2f;
+    [SerializeField] private float _zigzagAmplitude = 1.5f;
     private float _startX;
 
     protected override void Start()
@@ -56,10 +52,11 @@ public class Enemy_Seeker : Enemy
             transform.position = new Vector3(randomX, 7f, 0);
         }
     }
-protected override void OnTriggerEnter2D(Collider2D other)
-{
-    base.OnTriggerEnter2D(other);
-}
+
+    protected override void OnTriggerEnter2D(Collider2D other)
+    {
+        base.OnTriggerEnter2D(other);
+    }
 
 
 }

@@ -42,6 +42,7 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject _homingMissilePrefab;
     [SerializeField] private Transform _missileSpawnPoint;
     [SerializeField] private float _homingFireRate = 0.5f;
+    [SerializeField] private float _homingDuration = 10f;
     private bool _isHomingActive = false;
     private Coroutine _homingRoutine;
 
@@ -361,7 +362,7 @@ public class Player : MonoBehaviour
     private IEnumerator HomingPowerDownRoutine()
     {
         Debug.Log("Spawning homing missile...");
-       yield return new WaitForSeconds(10f); // homing lasts 10 seconds
+       yield return new WaitForSeconds(_homingDuration); // homing lasts 10 seconds
        _isHomingActive = false;
 
        if (_homingRoutine != null)

@@ -2,7 +2,6 @@
 
 public class Projectile_Powerup : MonoBehaviour
 {
-    [Header("Powerup")]
     [SerializeField] private float durationSeconds = 10f;
     [SerializeField] private AudioClip _pickupSfx;
     [SerializeField] private string _playerTag = "Player";

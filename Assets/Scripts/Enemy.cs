@@ -123,34 +123,34 @@ public class Enemy : MonoBehaviour
     }
 
     protected virtual void CalculateMovement()
-{
-    if (_dist < 2.5f)
     {
-        // Turn on thruster if not already
-        if (_enemyThruster != null && !_enemyThruster.activeSelf)
+        if (_dist < 2.5f)
+        {
+           // Turn on thruster if not already
+           if (_enemyThruster != null && !_enemyThruster.activeSelf)
             _enemyThruster.SetActive(true);
 
-        // Accelerate towards player
-        _aggroSpeed += 10f * Time.deltaTime; // acceleration value — tweak this number
-        Vector3 direction = (_player.transform.position - transform.position).normalized;
-        transform.position += direction * _aggroSpeed * Time.deltaTime;
-    }
-    else
-    {
-        // Reset thruster
-        if (_enemyThruster != null && _enemyThruster.activeSelf)
+           // Accelerate towards player
+           _aggroSpeed += 10f * Time.deltaTime; // acceleration value — tweak this number
+           Vector3 direction = (_player.transform.position - transform.position).normalized;
+           transform.position += direction * _aggroSpeed * Time.deltaTime;
+        }
+        else
+        {
+           // Reset thruster
+           if (_enemyThruster != null && _enemyThruster.activeSelf)
             _enemyThruster.SetActive(false);
 
-        // Move normally until in range
-        if (_movementPattern == EnemyMovementPattern.Down)
+           // Move normally until in range
+           if (_movementPattern == EnemyMovementPattern.Down)
             MoveDown();
-        else
+           else
             MoveZigZagDown();
 
-        // Reset aggro speed for next time
-        _aggroSpeed = 5f; // base speed before accelerating again
+           // Reset aggro speed for next time
+           _aggroSpeed = 5f; // base speed before accelerating again
+        }
     }
-}
 
 
     protected virtual void MoveDown()
@@ -278,7 +278,6 @@ public class Enemy : MonoBehaviour
                 }
             } 
 
-            
         }
     }
 }

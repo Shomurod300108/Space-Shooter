@@ -19,10 +19,11 @@ public class Spawn_Manager : MonoBehaviour
     [SerializeField] private GameObject _dodgerEnemyPrefab;
     [SerializeField] private GameObject _projectilePowerupPrefab;
     [SerializeField] private float _projectilePowerupChance = 0.05f;
+    [SerializeField] private GameObject _bossEnemyPrefab;
+    private bool _bossSpawned = false;
 
     public int CurrentWave => _currentWave;
   
-
     public void StartSpawning()
     {
         if (_isSpawning) return;
@@ -36,64 +37,78 @@ public class Spawn_Manager : MonoBehaviour
     }
 
     private void SpawnEnemy()
-{
-    Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 6f, 0);
-
-    float randomValue = Random.value; // Generate once between 0 and 1
-    GameObject enemyToSpawn;
-
-    if (randomValue < 0.1f)
     {
-        // 10% chance → Dodger enemy
-        enemyToSpawn = _dodgerEnemyPrefab;
+        Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 6f, 0);
+
+        float randomValue = Random.value; // Generate once between 0 and 1
+        GameObject enemyToSpawn;
+
+        if (randomValue < 0.15f)
+        {
+            // 15% chance → Dodger enemy
+            enemyToSpawn = _dodgerEnemyPrefab;
+        }
+        else if (randomValue < 0.40f)
+        {
+            // Next 25% chance → Seeker enemy
+            enemyToSpawn = _seekerEnemyPrefab;
+        }
+        else
+        { 
+            // Remaining 60% → Normal enemy
+            enemyToSpawn = _enemyPrefab;
+        }
+
+        GameObject newEnemy = Instantiate(enemyToSpawn, posToSpawn, Quaternion.identity);
+        newEnemy.transform.parent = _enemyContainer.transform;
     }
-    else if (randomValue < 0.35f)
-    {
-        // Next 25% chance → Seeker enemy
-        enemyToSpawn = _seekerEnemyPrefab;
-    }
-    else
-    {
-        // Remaining 65% → Normal enemy
-        enemyToSpawn = _enemyPrefab;
-    }
-
-    GameObject newEnemy = Instantiate(enemyToSpawn, posToSpawn, Quaternion.identity);
-    newEnemy.transform.parent = _enemyContainer.transform;
-}
-
-
-
 
     IEnumerator SpawnEnemyWaveRoutine(int enemiesCount)
-{
-    for (int i = 0; i < enemiesCount; i++)
     {
+      for (int i = 0; i < enemiesCount; i++)
+      {
         if (_stopSpawning) yield break;
 
-            SpawnEnemy();
+        SpawnEnemy();
 
         yield return new WaitForSeconds(_timeBetweenSpawns);
-    }
-}
+      }
 
+      yield break; 
+    }
 
     IEnumerator WaveRoutine()
     {
-        while (!_stopSpawning)
+      while (!_stopSpawning)
+      {
+        _currentWave++;
+
+        _enemiesInWave = _startingEnemiesInWave + (_currentWave - 1) * _enemiesIncreasePerWave;
+
+        Debug.Log("Spawning wave " + _currentWave);
+
+        yield return StartCoroutine(SpawnEnemyWaveRoutine(_enemiesInWave));
+
+        yield return new WaitUntil(() => _enemyContainer == null || _enemyContainer.transform.childCount == 0);
+
+        if (_currentWave >= 3 && !_bossSpawned)
         {
-            _currentWave++;
+            // Show flicker warning before boss appears
+            UIManager uiManager = FindObjectOfType<UIManager>();
+            if (uiManager != null)
+            {
+                yield return StartCoroutine(uiManager.ShowBossWarning());
+            }
 
-            _enemiesInWave = _startingEnemiesInWave + (_currentWave - 1) * _enemiesIncreasePerWave;
+            Instantiate(_bossEnemyPrefab, new Vector3(0, 7f, 0), Quaternion.identity);
 
-            yield return StartCoroutine(SpawnEnemyWaveRoutine(_enemiesInWave));
-
-            yield return new WaitUntil(() => _enemyContainer == null || _enemyContainer.transform.childCount == 0);
-
-            if (_stopSpawning) break;
-
-            yield return new WaitForSeconds(_timeBetweenWaves);
+            _bossSpawned = true;
+            _stopSpawning = true;
+            yield break; 
         }
+
+        yield return new WaitForSeconds(_timeBetweenWaves);
+       }
     }
 
     IEnumerator SpawnPowerupRoutine()
@@ -120,7 +135,14 @@ public class Spawn_Manager : MonoBehaviour
 
         yield break;
     }
-    
+
+    public void OnBossDefeated()
+    {
+        _bossSpawned = false;
+        _stopSpawning = false;
+
+        StartCoroutine(WaveRoutine());
+    }
 
     public void OnPlayerDeath()
     {

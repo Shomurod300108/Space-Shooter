@@ -4,10 +4,8 @@ using UnityEngine;
 
 public class Asteroid : MonoBehaviour
 {
-    [SerializeField]
-    private float _rotateSpeed = 19f;
-    [SerializeField]
-    private GameObject _explosionPrefab;
+    [SerializeField] private float _rotateSpeed = 19f;
+    [SerializeField] private GameObject _explosionPrefab;
     private Spawn_Manager _spawnManager;
     
     private void Start()
@@ -18,8 +16,7 @@ public class Asteroid : MonoBehaviour
         {
             Debug.LogError("The spawn manager is null");
         }
-
-}
+    }
 
     void Update()
     {

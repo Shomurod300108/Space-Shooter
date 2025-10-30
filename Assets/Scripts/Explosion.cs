@@ -8,5 +8,4 @@ public class Explosion : MonoBehaviour
     {
         Destroy(this.gameObject, 5.0f);
     }
-
 }

@@ -24,7 +24,6 @@ public class Player_Missile : MonoBehaviour
     {
         _spawnTime = Time.time;
         _target = null;
-        // start searching a tiny bit delayed so multiple projectiles don't cost too much
         InvokeRepeating(nameof(FindClosestTarget), 0f, _targetSearchInterval);
     }
 
